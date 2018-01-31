@@ -1,7 +1,9 @@
 package io.Pushjet.api;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -9,9 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 
@@ -65,6 +69,7 @@ public class PushListAdapter extends BaseAdapter {
         TextView titleText = (TextView) itemView.findViewById(R.id.push_title);
         TextView descriptionText = (TextView) itemView.findViewById(R.id.push_description);
         ImageView iconImage = (ImageView) itemView.findViewById(R.id.push_icon_image);
+        ImageButton linkButton = (ImageButton) itemView.findViewById(R.id.push_link_button);
 
         String title = entries.get(position).getTitle();
         if (title.equals(""))
@@ -77,6 +82,23 @@ public class PushListAdapter extends BaseAdapter {
         titleText.setText(title);
         descriptionText.setText(description);
         iconImage.setImageBitmap(icon);
+
+        if (entries.get(position).hasLink()) {
+            final String link = entries.get(position).getLink();
+            linkButton.setVisibility(View.VISIBLE);
+            linkButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    if (linkIntent.resolveActivity(context.getPackageManager()) != null)
+                        context.startActivity(linkIntent);
+                    else
+                        Toast.makeText(context, "Could not find app to handle link\n" + link, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        else
+            linkButton.setVisibility(View.INVISIBLE);
 
         TypedValue value = new TypedValue();
         DisplayMetrics metrics = new DisplayMetrics();
