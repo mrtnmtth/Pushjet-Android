@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import io.Pushjet.api.Async.DownloadLinkImageAsync;
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 import io.Pushjet.api.PushjetApi.PushjetService;
 
@@ -112,6 +113,10 @@ public class GcmIntentService extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
+        if (msg.hasLink()) {
+            new DownloadLinkImageAsync(this, NOTIFICATION_ID, msg).execute();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
