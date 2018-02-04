@@ -91,15 +91,6 @@ public class GcmIntentService extends IntentService {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(this, PushListActivity.class);
-        if (msg.hasLink()) {
-            try {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(msg.getLink()));
-            } catch (Exception ignore) {
-            }
-        }
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat_notif)
@@ -129,7 +120,23 @@ public class GcmIntentService extends IntentService {
         setPriority(mBuilder, msg);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-        mBuilder.setContentIntent(contentIntent);
+        Intent openAppIntent = new Intent(this, PushListActivity.class);
+        PendingIntent piOpenApp = PendingIntent.getActivity(this, 0, openAppIntent, 0);
+        mBuilder.setContentIntent(piOpenApp);
+
+        if (msg.hasLink() && bigPicture == null) {
+            try {
+                Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(msg.getLink()));
+                PendingIntent piOpenLink = PendingIntent.getActivity(this, 0, openLinkIntent, 0);
+                mBuilder.addAction(R.drawable.ic_action_open_link,
+                        getString(R.string.notification_open_link), piOpenLink);
+                mBuilder.addAction(R.drawable.ic_stat_notif,
+                        getString(R.string.notification_open_pushjet), piOpenLink);
+                mBuilder.setContentIntent(piOpenLink);
+            } catch (Exception ignore) {
+            }
+        }
+
         mNotificationManager.notify(notifyID, mBuilder.build());
     }
 
