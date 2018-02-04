@@ -10,7 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -18,13 +20,17 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import io.Pushjet.api.Async.DownloadLinkImageAsync;
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 import io.Pushjet.api.PushjetApi.PushjetService;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -62,7 +68,13 @@ public class GcmIntentService extends IntentService {
                 msg.setLink(AzMsg.getString("link"));
                 DatabaseHandler db = new DatabaseHandler(this);
                 db.addMessage(msg);
-                sendNotification(msg);
+
+                // assign local variable notifyID to prevent race conditions
+                int notifyID = NOTIFICATION_ID++;
+                sendNotification(msg, notifyID);
+                if (msg.hasLink()) {
+                    new DownloadLinkImageAsync(notifyID, msg).execute();
+                }
             } catch (JSONException ignore) {
                 Log.e("PushjetJson", ignore.getMessage());
             }
@@ -71,8 +83,11 @@ public class GcmIntentService extends IntentService {
         sendBroadcast(new Intent("PushjetMessageRefresh"));
     }
 
-    private void sendNotification(PushjetMessage msg) {
-        NOTIFICATION_ID++;
+    private void sendNotification(PushjetMessage msg, int notifyID) {
+        this.sendNotification(msg, notifyID, null);
+    }
+
+    private void sendNotification(PushjetMessage msg, int notifyID, Bitmap bigPicture) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -108,15 +123,14 @@ public class GcmIntentService extends IntentService {
             }
         }
 
+        if (bigPicture != null)
+            mBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bigPicture));
+
         setPriority(mBuilder, msg);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-
-        if (msg.hasLink()) {
-            new DownloadLinkImageAsync(this, NOTIFICATION_ID, msg).execute();
-        }
+        mNotificationManager.notify(notifyID, mBuilder.build());
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -127,6 +141,49 @@ public class GcmIntentService extends IntentService {
         }
 
         mBuilder.setPriority(priority);
+    }
+
+    public class DownloadLinkImageAsync extends AsyncTask<Void, Void, Bitmap> {
+        private int notifyID;
+        private PushjetMessage msg;
+
+        private DownloadLinkImageAsync(int notifyID, PushjetMessage msg) {
+            this.notifyID = notifyID;
+            this.msg = msg;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            if (!msg.hasLink())
+                return null;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Bitmap bitmap = null;
+            try {
+                HttpGet httpget = new HttpGet(msg.getLink());
+                HttpResponse response = (new DefaultHttpClient()).execute(httpget);
+                Header contentType = response.getFirstHeader("Content-Type");
+                if (!contentType.getValue().startsWith("image/"))
+                    return null;
+                response.getEntity().writeTo(out);
+                byte[] data = out.toByteArray();
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException ignore) {
+                }
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null)
+                // update notification
+                GcmIntentService.this.sendNotification(this.msg, this.notifyID, bitmap);
+        }
     }
 }
 
