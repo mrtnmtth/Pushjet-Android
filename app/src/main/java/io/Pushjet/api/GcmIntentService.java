@@ -137,6 +137,17 @@ public class GcmIntentService extends IntentService {
             }
         }
 
+        // if link is a geo URI create map intent
+        if (msg.hasLink() && msg.getLink().startsWith("geo:")) {
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(msg.getLink()));
+            PendingIntent piMap = PendingIntent.getActivity(this, 0, mapIntent, 0);
+            mBuilder.addAction(R.drawable.ic_action_map,
+                    getString(R.string.notification_open_map), piMap);
+            mBuilder.addAction(R.drawable.ic_stat_notif,
+                    getString(R.string.notification_open_pushjet), piOpenApp);
+            mBuilder.setContentIntent(piMap);
+        }
+
         mNotificationManager.notify(notifyID, mBuilder.build());
     }
 
@@ -163,10 +174,16 @@ public class GcmIntentService extends IntentService {
         protected Bitmap doInBackground(Void... voids) {
             if (!msg.hasLink())
                 return null;
+            String link = msg.getLink();
+            // if link is a geo URI, download Google Maps image
+            if (link.startsWith("geo:")) {
+                link = "https://maps.googleapis.com/maps/api/staticmap?zoom=16&size=512x300&" +
+                        "maptype=roadmap&markers=" + link.substring(4);
+            }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Bitmap bitmap = null;
             try {
-                HttpGet httpget = new HttpGet(msg.getLink());
+                HttpGet httpget = new HttpGet(link);
                 HttpResponse response = (new DefaultHttpClient()).execute(httpget);
                 Header contentType = response.getFirstHeader("Content-Type");
                 if (!contentType.getValue().startsWith("image/"))
