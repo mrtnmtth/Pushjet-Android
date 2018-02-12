@@ -98,6 +98,7 @@ public class GcmIntentService extends IntentService {
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg.getMessage()))
                         .setContentText(msg.getMessage())
+                        .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
         if (msg.getService().hasIcon()) {
@@ -124,14 +125,14 @@ public class GcmIntentService extends IntentService {
         PendingIntent piOpenApp = PendingIntent.getActivity(this, 0, openAppIntent, 0);
         mBuilder.setContentIntent(piOpenApp);
 
-        if (msg.hasLink() && bigPicture == null) {
+        if (msg.hasLink() && bigPicture == null && !msg.getLink().startsWith("geo:")) {
             try {
                 Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(msg.getLink()));
                 PendingIntent piOpenLink = PendingIntent.getActivity(this, 0, openLinkIntent, 0);
                 mBuilder.addAction(R.drawable.ic_action_open_link,
                         getString(R.string.notification_open_link), piOpenLink);
                 mBuilder.addAction(R.drawable.ic_stat_notif,
-                        getString(R.string.notification_open_pushjet), piOpenLink);
+                        getString(R.string.notification_open_pushjet), piOpenApp);
                 mBuilder.setContentIntent(piOpenLink);
             } catch (Exception ignore) {
             }
@@ -162,8 +163,8 @@ public class GcmIntentService extends IntentService {
     }
 
     public class DownloadLinkImageAsync extends AsyncTask<Void, Void, Bitmap> {
-        private int notifyID;
-        private PushjetMessage msg;
+        private final int notifyID;
+        private final PushjetMessage msg;
 
         private DownloadLinkImageAsync(int notifyID, PushjetMessage msg) {
             this.notifyID = notifyID;
