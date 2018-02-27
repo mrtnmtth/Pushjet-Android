@@ -98,6 +98,7 @@ public class GcmIntentService extends IntentService {
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg.getMessage()))
                         .setContentText(msg.getMessage())
+                        .setWhen(msg.getTimestamp().getTime())
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
