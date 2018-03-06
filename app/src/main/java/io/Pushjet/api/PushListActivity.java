@@ -1,6 +1,6 @@
 package io.Pushjet.api;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +9,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import io.Pushjet.api.Async.FirstLaunchAsync;
 import io.Pushjet.api.Async.GCMRegistrar;
@@ -26,12 +25,14 @@ import io.Pushjet.api.PushjetApi.PushjetMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PushListActivity extends ListActivity {
+public class PushListActivity extends Activity {
     private PushjetApi api;
     private DatabaseHandler db;
     private PushListAdapter adapter;
     private BroadcastReceiver receiver;
     private SwipeRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
 
     private SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
@@ -58,6 +59,10 @@ public class PushListActivity extends ListActivity {
         this.refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         this.refreshLayout.setEnabled(true);
         this.refreshLayout.setOnRefreshListener(refreshListener);
+        this.recyclerView = (RecyclerView) findViewById(R.id.push_list);
+        this.recyclerView.setHasFixedSize(true);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.recyclerView.setLayoutManager(this.layoutManager);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean firstLaunch = preferences.getBoolean("first_launch", true);
@@ -69,19 +74,13 @@ public class PushListActivity extends ListActivity {
             new FirstLaunchAsync().execute(getApplicationContext());
         }
 
+        adapter = new PushListAdapter(
+                this, new ArrayList<PushjetMessage>(Arrays.asList(db.getAllMessages())));
+        recyclerView.setAdapter(adapter);
 
-        adapter = new PushListAdapter(this);
-        setListAdapter(adapter);
-        this.getListView().setLongClickable(true);
-        this.getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                PushjetMessage message = (PushjetMessage) adapter.getItem(position);
-
-                MiscUtil.WriteToClipboard(message.getMessage(), "Pushjet message", getApplicationContext());
-                Toast.makeText(getApplicationContext(), "Copied message to clipboard", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
+                recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        recyclerView.addItemDecoration(mDividerItemDecoration);
 
 
         GCMRegistrar mGCMRegistrar = new GCMRegistrar(getApplicationContext());
@@ -99,15 +98,6 @@ public class PushListActivity extends ListActivity {
                 updatePushList();
             }
         };
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        if (adapter.getSelected() == position)
-            adapter.clearSelected();
-        else
-            adapter.setSelected(position);
     }
 
     @Override
