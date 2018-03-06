@@ -2,7 +2,6 @@ package io.Pushjet.api;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,16 +10,17 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -43,7 +43,7 @@ import io.Pushjet.api.PushjetApi.PushjetUri;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SubscriptionsActivity extends ListActivity {
+public class SubscriptionsActivity extends Activity {
     private PushjetApi api;
     private DatabaseHandler db;
     private SubscriptionsAdapter adapter;
@@ -55,6 +55,8 @@ public class SubscriptionsActivity extends ListActivity {
             refreshServices();
         }
     };
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +65,23 @@ public class SubscriptionsActivity extends ListActivity {
         this.refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         this.refreshLayout.setEnabled(true);
         this.refreshLayout.setOnRefreshListener(refreshListener);
+        this.recyclerView = (RecyclerView) findViewById(R.id.subscriptions);
+        this.recyclerView.setHasFixedSize(true);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.recyclerView.setLayoutManager(this.layoutManager);
 
         this.api = new PushjetApi(getApplicationContext(), SettingsActivity.getRegisterUrl(this));
         this.db = new DatabaseHandler(getApplicationContext());
 
         adapter = new SubscriptionsAdapter(this);
-        setListAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
         adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(db.getAllServices())));
-        registerForContextMenu(findViewById(android.R.id.list));
+        registerForContextMenu(findViewById(R.id.subscriptions));
+
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
+                recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        recyclerView.addItemDecoration(mDividerItemDecoration);
 
         Uri pushjetUri = getIntent().getData();
         if (pushjetUri != null) {
@@ -85,7 +95,7 @@ public class SubscriptionsActivity extends ListActivity {
             }
         }
 
-        if (adapter.getCount() == 0 && !this.refreshLayout.isRefreshing()) {
+        if (adapter.getItemCount() == 0 && !this.refreshLayout.isRefreshing()) {
             refreshServices();
         }
 
@@ -116,15 +126,9 @@ public class SubscriptionsActivity extends ListActivity {
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        openContextMenu(v);
-    }
-
-    @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        PushjetService service = (PushjetService) adapter.getItem(Math.round(info.id));
+        super.onContextItemSelected(item);
+        PushjetService service = (PushjetService) adapter.getSelectedItem();
         switch (item.getItemId()) {
             case R.id.action_copy_token:
                 MiscUtil.WriteToClipboard(service.getToken(), "Pushjet Token", this);
