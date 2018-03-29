@@ -70,6 +70,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public PushjetMessage[] getAllMessages() {
+        PushjetService[] services = this.getAllServices();
         SQLiteDatabase db = this.getReadableDatabase();
 
         try {
@@ -77,7 +78,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             Cursor cMsg = db.query(TABLE_MESSAGE, TABLE_MESSAGE_KEYS, null, null, null, null, null);
             if (cMsg.getCount() > 0 && cMsg.moveToFirst()) {
                 do {
-                    result.add(getMessageFromRow(cMsg));
+                    result.add(getMessageFromRow(cMsg, services));
                 } while (cMsg.moveToNext());
             }
             PushjetMessage[] ret = new PushjetMessage[result.size()];
@@ -295,8 +296,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     private PushjetMessage getMessageFromRow(Cursor cMsg) {
+        PushjetService[] srvcs = {};
+        return getMessageFromRow(cMsg, srvcs);
+    }
+
+    private PushjetMessage getMessageFromRow(Cursor cMsg, PushjetService[] srvs) {
+        String token = cMsg.getString(1);
+        PushjetService service = null;
+        for (PushjetService srv : srvs) {
+            if (srv.getToken().equals(token))
+                service = srv;
+        }
+        if (service == null)
+            service = getService(token);
+
         PushjetMessage msg = new PushjetMessage(
-                getService(cMsg.getString(1)),
+                service,
                 cMsg.getString(2),
                 cMsg.getString(3),
                 cMsg.getInt(5)
