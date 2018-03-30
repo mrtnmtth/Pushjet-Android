@@ -1,8 +1,15 @@
 package io.Pushjet.api.PushjetApi;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 
 import io.Pushjet.api.MiscUtil;
 import io.Pushjet.api.R;
@@ -114,11 +121,29 @@ public class PushjetService {
         }
     }
 
-    public Bitmap getIconBitmapOrDefault(Context context) {
-        Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+    public Drawable getIconDrawable(Context context) throws IOException {
+        return new BitmapDrawable(context.getResources(), getIconBitmap(context));
+    }
+
+    public Drawable getIconBitmapOrDefault(Context context) {
+        Resources res = context.getResources();
+        int size = res.getDimensionPixelSize(R.dimen.icon_size);
+        TypedArray colors = res.obtainTypedArray(R.array.placeholder_icon_colors);
+        int color = colors.getColor(Math.abs(name.hashCode() % colors.length()), 0);
+        colors.recycle();
+
+        Drawable icon = TextDrawable.builder()
+                .beginConfig()
+                .width(size)
+                .height(size)
+                .textColor(Color.WHITE)
+                .endConfig()
+                .buildRound(name.substring(0,1), color);
+
+
         if (hasIcon()) {
             try {
-                icon = getIconBitmap(context);
+                icon = getIconDrawable(context);
             } catch (IOException ignore) {
             }
         }

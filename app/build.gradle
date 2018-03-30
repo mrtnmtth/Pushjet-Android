@@ -28,6 +28,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:25.4.0'
     implementation 'com.android.support:recyclerview-v7:25.4.0'
     implementation 'com.google.android.gms:play-services-gcm:11.8.0'
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
 }
 

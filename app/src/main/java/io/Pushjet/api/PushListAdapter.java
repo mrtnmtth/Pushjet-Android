@@ -3,6 +3,7 @@ package io.Pushjet.api;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,12 +64,12 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
             title = entries.get(position).getService().getName();
         final String description = entries.get(position).getMessage();
         Date pushDate = entries.get(position).getTimestamp();
-        Bitmap icon = entries.get(position).getService().getIconBitmapOrDefault(context);
+        Drawable icon = entries.get(position).getService().getIconBitmapOrDefault(context);
 
         dateText.setText(this.df.format(pushDate));
         titleText.setText(title);
         descriptionText.setText(description);
-        iconImage.setImageBitmap(icon);
+        iconImage.setImageDrawable(icon);
 
         if (entries.get(position).hasLink()) {
             final String link = entries.get(position).getLink();
