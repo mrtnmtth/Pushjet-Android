@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_section_header"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/subheader_tile_height"
+    android:paddingTop="@dimen/padding_dense"
+    android:paddingStart="@dimen/padding_normal"
+    android:paddingEnd="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal"
+    android:paddingLeft="@dimen/padding_normal"
+    android:paddingBottom="@dimen/padding_dense"
+    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+    android:textAllCaps="true"
+    android:textColor="?android:attr/textColorHint"
+    android:textStyle="bold"
+    tools:text="@string/generic_placeholder" />

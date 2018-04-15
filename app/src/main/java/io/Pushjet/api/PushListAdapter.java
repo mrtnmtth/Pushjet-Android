@@ -20,7 +20,6 @@ import io.Pushjet.api.PushjetApi.PushjetMessage;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHolder> {
@@ -137,7 +136,6 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
     }
 
     public void addEntries(ArrayList<PushjetMessage> entries) {
-        Collections.reverse(entries);
         for (PushjetMessage entry : entries)
             this.entries.add(0, entry);
         notifyDataSetChanged();
@@ -149,7 +147,6 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
     }
 
     public void upDateEntries(ArrayList<PushjetMessage> entries) {
-        Collections.reverse(entries);
         this.entries = entries;
         notifyDataSetChanged();
     }

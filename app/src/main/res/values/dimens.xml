@@ -11,5 +11,7 @@
     <dimen name="icon_bounds">48dp</dimen>
     <dimen name="icon_padding">4dp</dimen> <!-- (icon_bounds - icon_size) / 2 -->
     <dimen name="icon_margin">12dp</dimen> <!-- padding_normal - icon_padding -->
+    
+    <dimen name="subheader_tile_height">48dp</dimen>
 
 </resources>
