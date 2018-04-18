@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +44,7 @@ import io.Pushjet.api.PushjetApi.PushjetUri;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SubscriptionsActivity extends Activity {
+public class SubscriptionsActivity extends AppCompatActivity {
     private PushjetApi api;
     private DatabaseHandler db;
     private SubscriptionsAdapter adapter;
