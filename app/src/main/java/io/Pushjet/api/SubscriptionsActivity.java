@@ -1,5 +1,8 @@
 package io.Pushjet.api;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -7,8 +10,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,11 +24,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -58,6 +65,10 @@ public class SubscriptionsActivity extends AppCompatActivity {
     };
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private FloatingActionButton fabMain;
+    private LinearLayout fabText;
+    private LinearLayout fabQr;
+    private boolean fabMenuOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +117,60 @@ public class SubscriptionsActivity extends AppCompatActivity {
                 adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(db.getAllServices())));
             }
         };
+
+        /* Prepare FloatingActionButtons and add OnClickListeners */
+
+        this.fabMain = (FloatingActionButton) findViewById(R.id.fab);
+        this.fabText = (LinearLayout) findViewById(R.id.fab_text_container);
+        this.fabQr = (LinearLayout) findViewById(R.id.fab_qr_container);
+
+        fabMenuOpen = false;
+        final Activity thisActivity = this;
+
+        fabMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFabMenu();
+            }
+        });
+        fabText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                builder.setTitle("Public token");
+                final EditText input = new EditText(thisActivity);
+
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            parseTokenOrUri(input.getText().toString());
+                        } catch (PushjetException e) {
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        } catch (NullPointerException ignore) {
+                        }
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+                toggleFabMenu();
+            }
+        });
+        fabQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new IntentIntegrator(thisActivity).initiateScan(IntentIntegrator.QR_CODE_TYPES);
+                toggleFabMenu();
+            }
+        });
     }
 
     @Override
@@ -176,65 +241,6 @@ public class SubscriptionsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.subscriptions, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.actions_new:
-                final String[] items = new String[]{
-                        "Scan QR", "Enter token"
-                };
-                final Activity thisActivity = this;
-                new AlertDialog.Builder(this)
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if (i == 0) {
-                                    new IntentIntegrator(thisActivity).initiateScan(IntentIntegrator.QR_CODE_TYPES);
-                                } if (i == 1) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-                                    builder.setTitle("Public token");
-                                    final EditText input = new EditText(thisActivity);
-
-                                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                                    builder.setView(input);
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            try {
-                                                parseTokenOrUri(input.getText().toString());
-                                            } catch (PushjetException e) {
-                                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            } catch (NullPointerException ignore) {
-                                            }
-
-                                        }
-                                    });
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                                    builder.show();
-                                }
-
-                            }
-                        })
-                        .show();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void parseTokenOrUri(String token) throws PushjetException {
         token = token.trim();
         if (PushjetUri.isValidUri(token)) {
@@ -275,5 +281,86 @@ public class SubscriptionsActivity extends AppCompatActivity {
         refresh.setCallback(callback);
         refreshLayout.setRefreshing(true);
         refresh.execute();
+    }
+
+    private void toggleFabMenu() {
+        final Resources res = recyclerView.getResources();
+        final int animDuration = 180;
+        final float fabElevation = res.getDimension(R.dimen.fab_elevation);
+        final float fabHeightNormal = res.getDimension(R.dimen.fab_size);
+        final float fabHeightMini = res.getDimension(R.dimen.fab_size_mini);
+        final float fabMargin = recyclerView.getResources().getDimension(R.dimen.padding_normal);
+        final float fabOffsetText = 0 - (fabHeightNormal + fabHeightMini) / 2 - fabMargin;
+        final float fabOffsetQr = fabOffsetText - fabHeightMini - fabMargin;
+
+        if (!fabMenuOpen) {
+            int test = fabMain.getHeight();
+            fabText.setVisibility(View.VISIBLE);
+            fabQr.setVisibility(View.VISIBLE);
+
+            ArrayList<Animator> animatorList = new ArrayList<>();
+            ObjectAnimator animFabMainRot = ObjectAnimator.ofFloat(fabMain, "rotation", 135f);
+            animatorList.add(animFabMainRot);
+            ObjectAnimator animFabMainElev = ObjectAnimator.ofFloat(fabMain, "elevation", fabElevation * 2);
+            animatorList.add(animFabMainElev);
+            ObjectAnimator animFabTextTrans = ObjectAnimator.ofFloat(fabText, "translationY", fabOffsetText);
+            animatorList.add(animFabTextTrans);
+            ObjectAnimator animFabTextFade = ObjectAnimator.ofFloat(fabText, "alpha", 0f, 1f);
+            animatorList.add(animFabTextFade);
+            ObjectAnimator animFabQrTrans = ObjectAnimator.ofFloat(fabQr, "translationY", fabOffsetQr);
+            animatorList.add(animFabQrTrans);
+            ObjectAnimator animFabQrFade = ObjectAnimator.ofFloat(fabQr, "alpha", 0f, 1f);
+            animatorList.add(animFabQrFade);
+
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animatorList);
+            animSet.setDuration(animDuration);
+            animSet.setInterpolator(new LinearOutSlowInInterpolator());
+            animSet.start();
+
+            fabMenuOpen = true;
+        } else {
+            ArrayList<Animator> animatorList = new ArrayList<>();
+            ObjectAnimator animFabMainRot = ObjectAnimator.ofFloat(fabMain, "rotation", 0f);
+            animatorList.add(animFabMainRot);
+            ObjectAnimator animFabMainElev = ObjectAnimator.ofFloat(fabMain, "elevation", fabElevation);
+            animatorList.add(animFabMainElev);
+            ObjectAnimator animFabTextTrans = ObjectAnimator.ofFloat(fabText, "translationY", 0f);
+            animatorList.add(animFabTextTrans);
+            ObjectAnimator animFabTextFade = ObjectAnimator.ofFloat(fabText, "alpha", 1f, 0f);
+            animatorList.add(animFabTextFade);
+            ObjectAnimator animFabQrTrans = ObjectAnimator.ofFloat(fabQr, "translationY", 0f);
+            animatorList.add(animFabQrTrans);
+            ObjectAnimator animFabQrFade = ObjectAnimator.ofFloat(fabQr, "alpha", 1f, 0f);
+            animatorList.add(animFabQrFade);
+
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animatorList);
+            animSet.setDuration(animDuration);
+            animSet.setInterpolator(new FastOutLinearInInterpolator());
+            animSet.start();
+
+            animFabQrTrans.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    fabMain.setCompatElevation(fabElevation);
+                    fabText.setVisibility(View.GONE);
+                    fabQr.setVisibility(View.GONE);
+                    fabMenuOpen = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+        }
     }
 }

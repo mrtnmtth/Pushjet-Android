@@ -26,6 +26,9 @@
     <string name="notification_open_link">Open link</string>
     <string name="notification_open_map">Open location</string>
 
+    <string name="subscription_new_enter_token">Enter token</string>
+    <string name="subscription_new_scan_qr">Scan QR code</string>
+
     <string name="pref_header_server">Custom Server</string>
     <string name="pref_header_general">General Settings</string>
     <string name="perf_server_use_custom">Use custom server</string>

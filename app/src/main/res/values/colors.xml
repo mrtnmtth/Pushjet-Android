@@ -3,6 +3,7 @@
     <color name="color_primary">#4764ad</color>
     <color name="color_primary_dark">#293a65</color>
     <color name="color_accent">@color/color_primary</color>
+    <color name="color_white">#ffffff</color>
 
     <!-- letter tile colors from AOSP UnifiedEmail app -->
     <color name="color_0">#90a4ae</color>

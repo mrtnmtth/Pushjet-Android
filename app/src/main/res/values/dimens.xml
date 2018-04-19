@@ -14,4 +14,12 @@
     
     <dimen name="subheader_tile_height">48dp</dimen>
 
+    <!-- Floating action button stuff. -->
+    <dimen name="fab_size">56dp</dimen> <!-- For reference. Source: Meterial Design Guidelines -->
+    <dimen name="fab_size_mini">40dp</dimen> <!-- Also only for reference -->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_mini">24dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_elevation_label">3dp</dimen>
+
 </resources>
