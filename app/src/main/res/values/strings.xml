@@ -20,7 +20,7 @@
     <string name="time_yesterday">Yesterday</string>
     <string name="time_this_week">This week</string>
     <string name="time_this_month">This month</string>
-    <string name="time_older">Older</string>
+    <string name="time_older">Older than a month</string>
 
     <string name="notification_open_pushjet">Open Pushjet</string>
     <string name="notification_open_link">Open link</string>

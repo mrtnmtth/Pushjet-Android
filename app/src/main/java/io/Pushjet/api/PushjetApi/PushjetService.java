@@ -138,7 +138,7 @@ public class PushjetService {
                 .height(size)
                 .textColor(Color.WHITE)
                 .endConfig()
-                .buildRound(name.substring(0,1), color);
+                .buildRound(name.substring(0,1).toUpperCase(), color);
 
 
         if (hasIcon()) {

@@ -2,7 +2,6 @@ package io.Pushjet.api;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +34,7 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
         }
     }
 
-    public PushListAdapter(Context context, ArrayList<PushjetMessage> entries) {
+    public PushListAdapter(Context context) {
         this.context = context;
         this.entries = entries;
         this.df = new SimpleDateFormat("d MMM HH:mm"); // 7 jul 15:30

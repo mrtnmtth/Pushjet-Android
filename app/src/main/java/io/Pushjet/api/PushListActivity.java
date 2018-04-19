@@ -85,8 +85,7 @@ public class PushListActivity extends AppCompatActivity {
             new FirstLaunchAsync().execute(getApplicationContext());
         }
 
-        adapter = new PushListAdapter(
-                this, new ArrayList<PushjetMessage>(Arrays.asList(db.getAllMessages())));
+        adapter = new PushListAdapter(this);
         recyclerView.setAdapter(adapter);
 
         viewSections = new Hashtable<>();
@@ -94,6 +93,7 @@ public class PushListActivity extends AppCompatActivity {
                 new SectionDividerDecoration(recyclerView, viewSections);
         recyclerView.addItemDecoration(sectionDivider);
 
+        updatePushList();
 
         GCMRegistrar mGCMRegistrar = new GCMRegistrar(getApplicationContext());
         if (firstLaunch || mGCMRegistrar.shouldRegister()) {
@@ -125,17 +125,6 @@ public class PushListActivity extends AppCompatActivity {
         super.onStop();
 
         unregisterReceiver(receiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updatePushList();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     private void updatePushList() {
