@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary">#4764ad</color>
+    <color name="color_primary_dark">#293a65</color>
+    <color name="color_accent">@color/color_primary</color>
+    <color name="color_white">#ffffff</color>
+
+    <!-- letter tile colors from AOSP UnifiedEmail app -->
+    <color name="color_0">#90a4ae</color>
+    <color name="color_1">#7baaf7</color>
+    <color name="color_2">#4dd0e1</color>
+    <color name="color_3">#4db6ac</color>
+    <color name="color_4">#aed581</color>
+    <color name="color_5">#fdd835</color>
+    <color name="color_6">#f2a600</color>
+    <color name="color_7">#ff8a65</color>
+    <color name="color_8">#f48fb1</color>
+    <color name="color_9">#7986cb</color>
+</resources>

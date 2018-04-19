@@ -2,15 +2,12 @@ package io.Pushjet.api;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,49 +19,38 @@ import io.Pushjet.api.PushjetApi.PushjetMessage;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
-public class PushListAdapter extends BaseAdapter {
+public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHolder> {
 
     private Context context;
-    private LayoutInflater mLayoutInflater;
     private ArrayList<PushjetMessage> entries = new ArrayList<PushjetMessage>();
     private DateFormat df;
     private int selected = -1;
 
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        ViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
     public PushListAdapter(Context context) {
         this.context = context;
-        this.mLayoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.entries = entries;
         this.df = new SimpleDateFormat("d MMM HH:mm"); // 7 jul 15:30
     }
 
     @Override
-    public int getCount() {
-        return this.entries.size();
+    public PushListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RelativeLayout itemView = (RelativeLayout) LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.fragment_pushlist, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public Object getItem(int position) {
-        return this.entries.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        RelativeLayout itemView;
-        if (convertView == null) {
-            itemView = (RelativeLayout) mLayoutInflater.inflate(
-                    R.layout.fragment_pushlist, parent, false
-            );
-        } else {
-            itemView = (RelativeLayout) convertView;
-        }
-
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        View itemView = holder.itemView;
         TextView dateText = (TextView) itemView.findViewById(R.id.push_date);
         TextView titleText = (TextView) itemView.findViewById(R.id.push_title);
         TextView descriptionText = (TextView) itemView.findViewById(R.id.push_description);
@@ -74,14 +60,14 @@ public class PushListAdapter extends BaseAdapter {
         String title = entries.get(position).getTitle();
         if (title.equals(""))
             title = entries.get(position).getService().getName();
-        String description = entries.get(position).getMessage();
+        final String description = entries.get(position).getMessage();
         Date pushDate = entries.get(position).getTimestamp();
-        Bitmap icon = entries.get(position).getService().getIconBitmapOrDefault(context);
+        Drawable icon = entries.get(position).getService().getIconBitmapOrDefault(context);
 
         dateText.setText(this.df.format(pushDate));
         titleText.setText(title);
         descriptionText.setText(description);
-        iconImage.setImageBitmap(icon);
+        iconImage.setImageDrawable(icon);
 
         if (entries.get(position).hasLink()) {
             final String link = entries.get(position).getLink();
@@ -93,25 +79,46 @@ public class PushListAdapter extends BaseAdapter {
                     if (linkIntent.resolveActivity(context.getPackageManager()) != null)
                         context.startActivity(linkIntent);
                     else
-                        Toast.makeText(context, "Could not find app to handle link\n" + link, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Could not find app to handle link\n" + link,
+                                Toast.LENGTH_LONG).show();
                 }
             });
         }
         else
-            linkButton.setVisibility(View.INVISIBLE);
+            linkButton.setVisibility(View.GONE);
 
-        TypedValue value = new TypedValue();
-        DisplayMetrics metrics = new DisplayMetrics();
+        // expand on click
+        final int pos = holder.getAdapterPosition();
+        final boolean isExpanded = pos == selected;
+        descriptionText.setSingleLine(!isExpanded);
+        holder.itemView.setActivated(isExpanded);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selected = isExpanded ? -1 : pos;
+                notifyItemChanged(pos);
+            }
+        });
 
-        context.getTheme().resolveAttribute(android.R.attr.listPreferredItemHeight, value, true);
-        ((WindowManager) (context.getSystemService(Context.WINDOW_SERVICE))).getDefaultDisplay().getMetrics(metrics);
+        // copy message on long click
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                MiscUtil.WriteToClipboard(description, "Pushjet message", context);
+                Toast.makeText(context, "Copied message to clipboard", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+    }
 
-        int lineCount = selected == position ? descriptionText.getLineCount() : 0;
-        int minHeight = (int) TypedValue.complexToDimension(value.data, metrics);
-        int prefHeight = (lineCount + 2) * descriptionText.getLineHeight();
-        itemView.getLayoutParams().height = prefHeight > minHeight ? prefHeight : minHeight;
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-        return itemView;
+    @Override
+    public int getItemCount() {
+        return this.entries.size();
     }
 
     public int getSelected() {
@@ -128,7 +135,6 @@ public class PushListAdapter extends BaseAdapter {
     }
 
     public void addEntries(ArrayList<PushjetMessage> entries) {
-        Collections.reverse(entries);
         for (PushjetMessage entry : entries)
             this.entries.add(0, entry);
         notifyDataSetChanged();
@@ -140,7 +146,6 @@ public class PushListAdapter extends BaseAdapter {
     }
 
     public void upDateEntries(ArrayList<PushjetMessage> entries) {
-        Collections.reverse(entries);
         this.entries = entries;
         notifyDataSetChanged();
     }

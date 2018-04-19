@@ -1,49 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip" >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_dense"
+    android:paddingEnd="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal"
+    android:paddingBottom="@dimen/padding_dense"
+    android:descendantFocusability="blocksDescendants"
+    tools:ignore="RtlSymmetry">
 
-    <LinearLayout android:id="@+id/service_icon_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="3dip"
+    <ImageView
+        android:id="@+id/service_icon_image"
+        android:layout_width="@dimen/icon_bounds"
+        android:layout_height="@dimen/icon_bounds"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip">
-
-        <ImageView
-            android:id="@+id/service_icon_image"
-            android:layout_width="45dip"
-            android:layout_height="45dip"
-            android:contentDescription="@string/service_icon" />
-
-    </LinearLayout>
+        android:layout_marginStart="@dimen/icon_margin"
+        android:layout_marginLeft="@dimen/icon_margin"
+        android:layout_marginEnd="@dimen/icon_margin"
+        android:layout_marginRight="@dimen/icon_margin"
+        android:padding="@dimen/icon_padding"
+        android:contentDescription="@string/service_icon"
+        tools:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/service_token"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_toRightOf="@id/service_icon_layout"
-        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:ellipsize="marquee"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toEndOf="@id/service_icon_image"
+        android:layout_toRightOf="@id/service_icon_image"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:layout_below="@+id/service_name"
         android:singleLine="true"
-        android:text="@string/generic_placeholder"
-        android:textSize="16sp" />
+        android:ellipsize="end"
+        tools:text="@string/generic_placeholder" />
 
     <TextView
-        android:layout_width="fill_parent"
+        android:id="@+id/service_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_above="@id/service_token"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/service_icon_layout"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_alignWithParentIfMissing="true"
-        android:gravity="center_vertical"
-        android:text="@string/generic_placeholder"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:id="@+id/service_name" />
+        android:layout_toEndOf="@id/service_icon_image"
+        android:layout_toRightOf="@id/service_icon_image"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="@string/generic_placeholder" />
 
 </RelativeLayout>

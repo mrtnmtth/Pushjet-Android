@@ -2,9 +2,24 @@
 <resources>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <!--
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    -->
+    <dimen name="padding_normal">16dp</dimen>
+    <dimen name="padding_dense">11dp</dimen> <!-- top/bottom padding for dense lists -->
+    <dimen name="spacing_normal">8dp</dimen>
+
+    <!-- Primary icons in Material Design list. -->
+    <dimen name="icon_size">40dp</dimen>
+    <dimen name="icon_bounds">48dp</dimen>
+    <dimen name="icon_padding">4dp</dimen> <!-- (icon_bounds - icon_size) / 2 -->
+    <dimen name="icon_margin">12dp</dimen> <!-- padding_normal - icon_padding -->
+    
+    <dimen name="subheader_tile_height">48dp</dimen>
+
+    <!-- Floating action button stuff. -->
+    <dimen name="fab_size">56dp</dimen> <!-- For reference. Source: Meterial Design Guidelines -->
+    <dimen name="fab_size_mini">40dp</dimen> <!-- Also only for reference -->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_mini">24dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_elevation_label">3dp</dimen>
 
 </resources>

@@ -10,6 +10,7 @@ import io.Pushjet.api.PushjetApi.PushjetMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 public class ReceivePushAsync extends AsyncTask<Void, Void, ArrayList<PushjetMessage>> {
@@ -42,6 +43,7 @@ public class ReceivePushAsync extends AsyncTask<Void, Void, ArrayList<PushjetMes
         DatabaseHandler dbh = new DatabaseHandler(this.api.getContext());
         for (PushjetMessage msg : result)
             dbh.addMessage(msg);
+        Collections.reverse(result);
         adapter.addEntries(result);
         if (this.callback != null) {
             this.callback.receivePush(result);

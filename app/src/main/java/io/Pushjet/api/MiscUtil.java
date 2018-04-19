@@ -12,6 +12,7 @@ import com.google.zxing.common.BitMatrix;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 public class MiscUtil {
 
@@ -59,6 +60,12 @@ public class MiscUtil {
         Canvas canvas = new Canvas(background);
         canvas.drawBitmap(bitmap, (sqr - oWidth) / 2, (sqr - oHeight) / 2, paint);
         return Bitmap.createScaledBitmap(background, width, height, false);
+    }
+
+    public static long timeDiffInDays(Date date) {
+        long time = date.getTime();
+        long now = System.currentTimeMillis();
+        return (now - time) / (1000 * 3600 * 24);
     }
 
     public static void WriteToClipboard(String data, String title, Context ctx) {

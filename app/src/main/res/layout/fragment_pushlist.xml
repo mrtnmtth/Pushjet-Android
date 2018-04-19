@@ -1,77 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:listPreferredItemHeight"
-    android:padding="6dip"
-    android:descendantFocusability="blocksDescendants" >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_normal"
+    android:paddingEnd="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal"
+    android:paddingBottom="@dimen/padding_normal"
+    android:descendantFocusability="blocksDescendants"
+    tools:ignore="RtlSymmetry">
 
-    <LinearLayout android:id="@+id/push_icon_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="3dip"
+    <ImageView
+        android:id="@+id/push_icon_image"
+        android:layout_width="@dimen/icon_bounds"
+        android:layout_height="@dimen/icon_bounds"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip">
-
-        <ImageView
-            android:id="@+id/push_icon_image"
-            android:layout_width="45dip"
-            android:layout_height="45dip"
-            android:contentDescription="@string/service_icon" />
-
-    </LinearLayout>
+        android:layout_marginStart="@dimen/icon_margin"
+        android:layout_marginLeft="@dimen/icon_margin"
+        android:layout_marginEnd="@dimen/icon_margin"
+        android:layout_marginRight="@dimen/icon_margin"
+        android:padding="@dimen/icon_padding"
+        android:contentDescription="@string/service_icon"
+        tools:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/push_description"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:ellipsize="marquee"
-        android:layout_toRightOf="@id/push_icon_layout"
-        android:text="@string/generic_placeholder"
-        android:textSize="16sp"
-        android:layout_below="@+id/push_title" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/push_icon_image"
+        android:layout_toRightOf="@id/push_icon_image"
+        android:layout_below="@+id/push_title"
+        android:layout_toStartOf="@id/push_link_button"
+        android:layout_toLeftOf="@id/push_link_button"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" />
 
     <TextView
-        android:layout_width="fill_parent"
+        android:id="@+id/push_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:gravity="center_vertical"
-        android:text="@string/generic_placeholder"
-        android:layout_toRightOf="@id/push_icon_layout"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:id="@+id/push_title" />
+        android:layout_toEndOf="@id/push_icon_image"
+        android:layout_toRightOf="@id/push_icon_image"
+        android:layout_toStartOf="@id/push_date"
+        android:layout_toLeftOf="@id/push_date"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="@string/generic_placeholder" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/generic_placeholder"
         android:id="@+id/push_date"
-        android:textSize="14sp"
-        android:layout_alignTop="@+id/push_title"
-        android:layout_alignRight="@+id/push_title"
-        android:layout_alignEnd="@+id/push_title" />
-
-    <LinearLayout android:id="@+id/link_icon_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/push_description"
-        android:layout_alignEnd="@+id/push_description" >
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="?android:attr/textColorHint"
+        tools:text="@string/generic_placeholder" />
 
-        <ImageButton
-            android:id="@+id/push_link_button"
-            android:layout_width="24dip"
-            android:layout_height="24dip"
-            android:background="@null"
-            android:src="@drawable/ic_action_open_link" />
-
-    </LinearLayout>
-
+    <ImageButton
+        android:id="@+id/push_link_button"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/push_description"
+        android:background="@null"
+        android:contentDescription="@string/notification_open_link"
+        android:src="@drawable/ic_action_open_link"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </RelativeLayout>
