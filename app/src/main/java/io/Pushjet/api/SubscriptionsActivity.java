@@ -167,7 +167,9 @@ public class SubscriptionsActivity extends AppCompatActivity {
         fabQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new IntentIntegrator(thisActivity).initiateScan(IntentIntegrator.QR_CODE_TYPES);
+                IntentIntegrator integrator = new IntentIntegrator(thisActivity);
+                integrator.setOrientationLocked(false);
+                integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
                 toggleFabMenu();
             }
         });
