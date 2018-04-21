@@ -37,7 +37,6 @@ public class AddServiceAsync extends AsyncTask<String, Void, PushjetService> {
     @Override
     protected void onPostExecute(PushjetService service) {
         if (service != null) {
-            new DownloadServiceLogoAsync(api.getContext()).execute(service);
             db.addService(service);
             adapter.addEntry(service);
         } else {

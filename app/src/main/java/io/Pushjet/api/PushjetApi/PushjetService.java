@@ -3,19 +3,14 @@ package io.Pushjet.api.PushjetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 
-import io.Pushjet.api.MiscUtil;
 import io.Pushjet.api.R;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Date;
 
 public class PushjetService {
@@ -97,57 +92,23 @@ public class PushjetService {
         return !this.icon.equals("");
     }
 
-    public boolean iconCached(Context context) {
-        if (!hasIcon())
-            return false;
-        try {
-            context.openFileInput(MiscUtil.iconFilename(this.icon));
-            return true;
-        } catch (IOException ignore) {
-            return false;
-        }
+    public Uri getIconUri() {
+        return Uri.parse(icon);
     }
 
-    public Bitmap getIconBitmap(Context context) throws IOException {
-        FileInputStream in = null;
-        try {
-            in = context.openFileInput(MiscUtil.iconFilename(this.icon));
-            Bitmap bitmap = BitmapFactory.decodeStream(in);
-            if (bitmap == null)
-                throw new IOException("Decoding error");
-            return bitmap;
-        } finally {
-            if (in != null) in.close();
-        }
-    }
-
-    public Drawable getIconDrawable(Context context) throws IOException {
-        return new BitmapDrawable(context.getResources(), getIconBitmap(context));
-    }
-
-    public Drawable getIconBitmapOrDefault(Context context) {
+    public Drawable getIconPlaceholder(Context context) {
         Resources res = context.getResources();
         int size = res.getDimensionPixelSize(R.dimen.icon_size);
         TypedArray colors = res.obtainTypedArray(R.array.placeholder_icon_colors);
         int color = colors.getColor(Math.abs(name.hashCode() % colors.length()), 0);
         colors.recycle();
 
-        Drawable icon = TextDrawable.builder()
+        return TextDrawable.builder()
                 .beginConfig()
                 .width(size)
                 .height(size)
                 .textColor(Color.WHITE)
                 .endConfig()
                 .buildRound(name.substring(0,1).toUpperCase(), color);
-
-
-        if (hasIcon()) {
-            try {
-                icon = getIconDrawable(context);
-            } catch (IOException ignore) {
-            }
-        }
-        return icon;
     }
-
 }

@@ -5,7 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import com.google.zxing.common.BitMatrix;
 
@@ -49,17 +50,30 @@ public class MiscUtil {
         return bmp;
     }
 
-    public static Bitmap scaleBitmap(Bitmap bitmap, int width, int height) {
-        int oHeight = bitmap.getHeight();
-        int oWidth = bitmap.getWidth();
-        int sqr = oHeight > oWidth ? oHeight : oWidth;
+    // Stolen from org.thoughtcrime.securesms.util.BitmapUtil
+    public static Bitmap bitmapFromDrawable(final Drawable drawable, final int width, final int height) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
 
-        Paint paint = new Paint();
-        paint.setFilterBitmap(true);
-        Bitmap background = Bitmap.createBitmap(sqr, sqr, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(background);
-        canvas.drawBitmap(bitmap, (sqr - oWidth) / 2, (sqr - oHeight) / 2, paint);
-        return Bitmap.createScaledBitmap(background, width, height, false);
+        int canvasWidth = drawable.getIntrinsicWidth();
+        if (canvasWidth <= 0) canvasWidth = width;
+
+        int canvasHeight = drawable.getIntrinsicHeight();
+        if (canvasHeight <= 0) canvasHeight = height;
+
+        Bitmap bitmap;
+
+        try {
+            bitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        } catch (Exception e) {
+            bitmap = null;
+        }
+
+        return bitmap;
     }
 
     public static long timeDiffInDays(Date date) {

@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 
 import java.text.DateFormat;
@@ -62,12 +64,22 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
             title = entries.get(position).getService().getName();
         final String description = entries.get(position).getMessage();
         Date pushDate = entries.get(position).getTimestamp();
-        Drawable icon = entries.get(position).getService().getIconBitmapOrDefault(context);
+        Drawable icon = entries.get(position).getService().getIconPlaceholder(context);
 
         dateText.setText(this.df.format(pushDate));
         titleText.setText(title);
         descriptionText.setText(description);
-        iconImage.setImageDrawable(icon);
+        if (entries.get(position).getService().hasIcon()) {
+            Uri iconUrl = entries.get(position).getService().getIconUri();
+            Picasso.with(context)
+                    .load(iconUrl)
+                    .placeholder(icon)
+                    .fit()
+                    .centerInside()
+                    .into(iconImage);
+        } else {
+            iconImage.setImageDrawable(icon);
+        }
 
         if (entries.get(position).hasLink()) {
             final String link = entries.get(position).getLink();

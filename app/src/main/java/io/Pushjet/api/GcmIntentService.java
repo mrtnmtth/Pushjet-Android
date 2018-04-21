@@ -10,28 +10,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.squareup.picasso.Picasso;
 
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 import io.Pushjet.api.PushjetApi.PushjetService;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 
 public class GcmIntentService extends IntentService {
@@ -58,7 +54,7 @@ public class GcmIntentService extends IntentService {
                 );
                 srv.setIcon(AzServ.getString("icon"));
 
-                PushjetMessage msg = new PushjetMessage(
+                final PushjetMessage msg = new PushjetMessage(
                         srv,
                         AzMsg.getString("message"),
                         AzMsg.getString("title"),
@@ -70,13 +66,42 @@ public class GcmIntentService extends IntentService {
                 db.addMessage(msg);
 
                 // assign local variable notifyID to prevent race conditions
-                int notifyID = NOTIFICATION_ID++;
+                final int notifyID = NOTIFICATION_ID++;
                 sendNotification(msg, notifyID);
+
                 if (msg.hasLink()) {
-                    new DownloadLinkImageAsync(notifyID, msg).execute();
+                    String link = msg.getLink();
+                    int width = 512;
+                    int height = 300;
+
+                    // if link is a geo URI, download Google Maps image
+                    if (link.startsWith("geo:")) {
+                        link = "https://maps.googleapis.com/maps/api/staticmap" +
+                                "?zoom=16&size=" + width + "x" + height +
+                                "&maptype=roadmap&markers=" + link.substring(4);
+                    }
+
+                    // check content type and download with Picasso
+                    URL url = new URL(link);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    String contentType = conn.getHeaderField("Content-Type");
+
+                    if (contentType.startsWith("image/")) {
+                        Picasso p = Picasso.with(getApplicationContext());
+                        p.setIndicatorsEnabled(true);
+                        Bitmap image = p.load(link)
+                                .resize(width, height)
+                                .centerCrop()
+                                .onlyScaleDown()
+                                .get();
+                        sendNotification(msg, notifyID, image);
+                    }
                 }
             } catch (JSONException ignore) {
                 Log.e("PushjetJson", ignore.getMessage());
+            } catch (IOException e) {
+                // image download has failed | link does not reference image file
+                Log.e("PushjetLink", e.getMessage());
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
@@ -102,18 +127,33 @@ public class GcmIntentService extends IntentService {
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
-        if (msg.getService().hasIcon()) {
+        Context context = getApplicationContext();
+        Resources res = context.getResources();
+        int widthResId = android.R.dimen.notification_large_icon_width;
+        int heightResId = android.R.dimen.notification_large_icon_height;
+        PushjetService service = msg.getService();
+
+        if (service.hasIcon()) {
             try {
-                Bitmap icon = msg.getService().getIconBitmap(getApplicationContext());
-                Resources res = getApplicationContext().getResources();
+                @SuppressWarnings("SuspiciousNameCombination")
+                Bitmap icon = Picasso.with(context)
+                        .load(service.getIconUri())
+                        .placeholder(service.getIconPlaceholder(context))
+                        .resizeDimen(widthResId, heightResId)
+                        .centerInside()
+                        .onlyScaleDown()
+                        .get();
 
-                int nHeight = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-                int nWidth = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-
-                mBuilder.setLargeIcon(MiscUtil.scaleBitmap(icon, nWidth, nHeight));
+                mBuilder.setLargeIcon(icon);
             } catch (IOException ignore) {
                 ignore.printStackTrace();
             }
+        } else {
+            int width = res.getDimensionPixelSize(widthResId);
+            int height = res.getDimensionPixelSize(heightResId);
+            Bitmap icon = MiscUtil.bitmapFromDrawable(service.getIconPlaceholder(context),
+                    width, height);
+            mBuilder.setLargeIcon(icon);
         }
 
         if (bigPicture != null)
@@ -161,55 +201,6 @@ public class GcmIntentService extends IntentService {
         }
 
         mBuilder.setPriority(priority);
-    }
-
-    public class DownloadLinkImageAsync extends AsyncTask<Void, Void, Bitmap> {
-        private final int notifyID;
-        private final PushjetMessage msg;
-
-        private DownloadLinkImageAsync(int notifyID, PushjetMessage msg) {
-            this.notifyID = notifyID;
-            this.msg = msg;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... voids) {
-            if (!msg.hasLink())
-                return null;
-            String link = msg.getLink();
-            // if link is a geo URI, download Google Maps image
-            if (link.startsWith("geo:")) {
-                link = "https://maps.googleapis.com/maps/api/staticmap?zoom=16&size=512x300&" +
-                        "maptype=roadmap&markers=" + link.substring(4);
-            }
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Bitmap bitmap = null;
-            try {
-                HttpGet httpget = new HttpGet(link);
-                HttpResponse response = (new DefaultHttpClient()).execute(httpget);
-                Header contentType = response.getFirstHeader("Content-Type");
-                if (!contentType.getValue().startsWith("image/"))
-                    return null;
-                response.getEntity().writeTo(out);
-                byte[] data = out.toByteArray();
-                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-            } catch (Exception ignore) {
-                ignore.printStackTrace();
-            } finally {
-                try {
-                    out.close();
-                } catch (IOException ignore) {
-                }
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (bitmap != null)
-                // update notification
-                GcmIntentService.this.sendNotification(this.msg, this.notifyID, bitmap);
-        }
     }
 }
 

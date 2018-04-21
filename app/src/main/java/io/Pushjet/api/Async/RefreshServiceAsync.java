@@ -39,8 +39,6 @@ public class RefreshServiceAsync extends AsyncTask<Void, Void, PushjetService[]>
     @Override
     protected void onPostExecute(PushjetService[] services) {
         super.onPostExecute(services);
-        for (PushjetService service : services)
-            new DownloadServiceLogoAsync(api.getContext()).execute(service);
         if (callback != null)
             callback.onComplete(services);
     }

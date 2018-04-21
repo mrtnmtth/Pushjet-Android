@@ -3,6 +3,7 @@ package io.Pushjet.api;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import io.Pushjet.api.PushjetApi.PushjetService;
 
@@ -48,11 +51,21 @@ public class SubscriptionsAdapter extends RecyclerView.Adapter<SubscriptionsAdap
 
         String title = entries.get(position).getName();
         String token = entries.get(position).getToken();
-        Drawable icon = entries.get(position).getIconBitmapOrDefault(context);
+        Drawable icon = entries.get(position).getIconPlaceholder(context);
 
         titleText.setText(title);
         tokenText.setText(token);
-        iconImage.setImageDrawable(icon);
+        if (entries.get(position).hasIcon()) {
+            Uri iconUrl = entries.get(position).getIconUri();
+            Picasso.with(context)
+                    .load(iconUrl)
+                    .placeholder(icon)
+                    .fit()
+                    .centerInside()
+                    .into(iconImage);
+        } else {
+            iconImage.setImageDrawable(icon);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
