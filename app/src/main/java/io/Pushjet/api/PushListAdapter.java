@@ -26,7 +26,7 @@ import java.util.Date;
 public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<PushjetMessage> entries = new ArrayList<PushjetMessage>();
+    private ArrayList<PushjetMessage> entries = new ArrayList<>();
     private DateFormat df;
     private int selected = -1;
 
@@ -36,9 +36,8 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
         }
     }
 
-    public PushListAdapter(Context context) {
+    PushListAdapter(Context context) {
         this.context = context;
-        this.entries = entries;
         this.df = new SimpleDateFormat("d MMM HH:mm"); // 7 jul 15:30
     }
 
@@ -137,7 +136,7 @@ public class PushListAdapter extends RecyclerView.Adapter<PushListAdapter.ViewHo
         return selected;
     }
 
-    public void setSelected(int selected) {
+    private void setSelected(int selected) {
         this.selected = selected;
         notifyDataSetChanged();
     }

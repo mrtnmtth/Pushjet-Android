@@ -15,8 +15,8 @@ import io.Pushjet.api.PushjetApi.PushjetService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
+@SuppressWarnings("WeakerAccess")
 public class DatabaseHandler extends SQLiteOpenHelper {
     private String TABLE_SUBSCRIPTION = "subscription";
     private String KEY_SUBSCRIPTION_TOKEN = "service";
@@ -73,6 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         PushjetService[] services = this.getAllServices();
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             List<PushjetMessage> result = new ArrayList<>();
             Cursor cMsg = db.query(TABLE_MESSAGE, TABLE_MESSAGE_KEYS, null, null, null, null, null);
@@ -99,6 +100,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             db.insert(TABLE_MESSAGE, null, vMsg);
 
@@ -116,6 +118,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getWritableDatabase();
             String fmt = "`%s` = '%s'";
 
+            //noinspection TryFinallyCanBeTryWithResources
             try {
                 db.delete(TABLE_MESSAGE, String.format(fmt, KEY_MESSAGE_SERVICE, service.getToken()), null);
             } finally {
@@ -143,6 +146,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String fmt = "`%s` = '%s'";
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             db.delete(TABLE_MESSAGE, String.format(fmt, KEY_MESSAGE_ID, message.getId()), null);
         } finally {
@@ -153,6 +157,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public PushjetMessage getMessage(int id) throws PushjetException {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             Cursor cMsg = db.query(TABLE_MESSAGE, TABLE_MESSAGE_KEYS, KEY_MESSAGE_ID + " = ?", new String[]{id + ""}, null, null, null);
             if (cMsg.getCount() > 0 && cMsg.moveToFirst())
@@ -193,6 +198,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery = "SELECT  * FROM " + TABLE_SUBSCRIPTION;
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             return db.rawQuery(countQuery, null).getCount();
         } finally {
@@ -203,6 +209,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public PushjetService getService(String token) {
         SQLiteDatabase db = this.getReadableDatabase();
         PushjetService srv;
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             Cursor cLsn = db.query(TABLE_SUBSCRIPTION, TABLE_SUBSCRIPTION_KEYS, KEY_SUBSCRIPTION_TOKEN + " = ?", new String[]{token}, null, null, null);
             cLsn.moveToFirst();
@@ -213,6 +220,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     cLsn.getString(1),
                     new Date((long) cLsn.getInt(4) * 1000)
             );
+            cLsn.close();
         } catch (CursorIndexOutOfBoundsException ignore) {
             srv = new PushjetService(token, "UNKNOWN");
         } finally {
@@ -244,9 +252,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public boolean isListening(String service) {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             Cursor cursor = db.query(TABLE_SUBSCRIPTION, TABLE_SUBSCRIPTION_KEYS, KEY_SUBSCRIPTION_TOKEN + " = ?", new String[]{service}, null, null, null);
-            return cursor.getCount() > 0;
+            int count = cursor.getCount();
+            cursor.close();
+            return count > 0;
         } finally {
             db.close();
         }
@@ -254,8 +265,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public PushjetService[] getAllServices() {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<PushjetService> result = new ArrayList<PushjetService>();
+        List<PushjetService> result = new ArrayList<>();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             Cursor cSrv = db.query(TABLE_SUBSCRIPTION, TABLE_SUBSCRIPTION_KEYS, null, null, null, null, null);
             if (cSrv.getCount() > 0 && cSrv.moveToFirst()) {
@@ -269,6 +281,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     ));
                 } while (cSrv.moveToNext());
             }
+            cSrv.close();
             return result.toArray(new PushjetService[result.size()]);
         } finally {
             db.close();
@@ -278,6 +291,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void truncateMessages() {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             db.delete(TABLE_MESSAGE, null, null);
         } finally {
@@ -288,6 +302,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void truncateServices() {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             db.delete(TABLE_SUBSCRIPTION, null, null);
         } finally {

@@ -1,7 +1,6 @@
 package io.Pushjet.api.PushjetApi;
 
 import java.util.Date;
-import java.util.TimeZone;
 
 public class PushjetMessage {
     private String title;

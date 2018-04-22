@@ -22,11 +22,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class GCMRegistrar {
-    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "app_version";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    protected String TAG = "GCM";
+    private String TAG = "GCM";
     private GoogleCloudMessaging gcm;
     private Context mContext;
 
@@ -106,7 +107,7 @@ public class GCMRegistrar {
 
         editor.putString(PROPERTY_REG_ID, "");
         editor.putInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        editor.commit();
+        editor.apply();
     }
 
     private static boolean asyncAlreadyRunning = false;
@@ -136,7 +137,7 @@ public class GCMRegistrar {
                 }
                 String regid = gcm.register(senderId);
 
-                Map<String, String> data = new HashMap<String, String>();
+                Map<String, String> data = new HashMap<>();
                 data.put("regId", regid);
                 data.put("uuid", new DeviceUuidFactory(mContext).getDeviceUuid().toString());
                 for (int i = 1; i <= 10; i++) {

@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 
+@SuppressWarnings("deprecation")
 public class GcmIntentService extends IntentService {
     private static int NOTIFICATION_ID = 0;
 
@@ -43,6 +44,7 @@ public class GcmIntentService extends IntentService {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
 
+        assert extras != null;
         if (!extras.isEmpty() && GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
             try {
                 JSONObject AzMsg = new JSONObject(extras.getString("message"));

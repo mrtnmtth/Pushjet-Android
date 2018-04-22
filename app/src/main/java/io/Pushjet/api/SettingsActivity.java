@@ -32,13 +32,6 @@ import io.Pushjet.api.PushjetApi.PushjetApi;
 import java.util.List;
 
 public class SettingsActivity extends PreferenceActivity {
-    /**
-     * Determines whether to always show the simplified settings UI, where
-     * settings are presented in a single list. When false, settings are shown
-     * as a master/detail two-pane view on tablets. When true, a single pane is
-     * shown on tablets.
-     */
-    private static final boolean ALWAYS_SIMPLE_PREFS = false;
     private static final String DEFAULT_PUSHJET_GCM_REGISTER_URL = "https://api.pushjet.io";
     private static final String DEFAULT_SENDER_ID = "509878466986";
 
@@ -148,16 +141,12 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     /**
-     * Determines whether the simplified settings UI should be shown. This is
-     * true if this is forced via {@link #ALWAYS_SIMPLE_PREFS}, or the device
-     * doesn't have newer APIs like {@link PreferenceFragment}, or the device
-     * doesn't have an extra-large screen. In these cases, a single-pane
-     * "simplified" settings UI should be shown.
+     * Determines whether the simplified settings UI or a master/detail two-pane view should be
+     * shown. This is true if the device doesn't have an extra-large screen. In these case, a
+     * single-pane "simplified" settings UI should be shown.
      */
     private static boolean isSimplePreferences(Context context) {
-        return ALWAYS_SIMPLE_PREFS
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                || !isXLargeTablet(context);
+        return !isXLargeTablet(context);
     }
 
     private static void bindPreferenceSummaryToValue(Preference preference) {

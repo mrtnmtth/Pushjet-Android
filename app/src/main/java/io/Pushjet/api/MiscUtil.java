@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+@SuppressWarnings("WeakerAccess")
 public class MiscUtil {
 
     public static String hash(String s) {
@@ -83,13 +84,9 @@ public class MiscUtil {
     }
 
     public static void WriteToClipboard(String data, String title, Context ctx) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(data);
-        } else {
-            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(title, data);
-            clipboard.setPrimaryClip(clip);
-        }
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(title, data);
+        assert clipboard != null;
+        clipboard.setPrimaryClip(clip);
     }
 }

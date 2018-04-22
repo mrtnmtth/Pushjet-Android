@@ -79,7 +79,7 @@ public class PushjetApi {
     }
 
     public void sendMessage(PushjetMessage msg) throws PushjetException {
-        Map<String, String> data = new HashMap<String, String>();
+        Map<String, String> data = new HashMap<>();
         data.put("service", msg.getService().getToken());
         data.put("message", msg.getMessage());
         data.put("title", msg.getTitle());
@@ -116,7 +116,7 @@ public class PushjetApi {
     }
 
     private Map<String, String> getBaseMap() {
-        Map<String, String> data = new HashMap<String, String>();
+        Map<String, String> data = new HashMap<>();
         data.put("uuid", this.uuid);
         return data;
     }

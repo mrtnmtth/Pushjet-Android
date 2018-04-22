@@ -11,9 +11,9 @@ import java.util.UUID;
 // http://stackoverflow.com/questions/2785485/is-there-a-unique-android-device-id
 public class DeviceUuidFactory {
 
-    protected static final String PREFS_FILE = "device_id.xml";
-    protected static final String PREFS_DEVICE_ID = "device_id";
-    protected volatile static UUID uuid;
+    private static final String PREFS_FILE = "device_id.xml";
+    private static final String PREFS_DEVICE_ID = "device_id";
+    private volatile static UUID uuid;
 
     public DeviceUuidFactory(Context context) {
         if (uuid == null) {

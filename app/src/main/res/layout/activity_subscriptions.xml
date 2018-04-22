@@ -34,7 +34,8 @@
                 android:background="@drawable/fab_label_background"
                 android:elevation="@dimen/fab_elevation_label"
                 android:text="@string/subscription_new_scan_qr"
-                android:textColor="@color/color_white" />
+                android:textColor="@color/color_white"
+                tools:ignore="UnusedAttribute" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_qr"
@@ -64,7 +65,8 @@
                 android:background="@drawable/fab_label_background"
                 android:elevation="@dimen/fab_elevation_label"
                 android:text="@string/subscription_new_enter_token"
-                android:textColor="@color/color_white" />
+                android:textColor="@color/color_white"
+                tools:ignore="UnusedAttribute" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_text"

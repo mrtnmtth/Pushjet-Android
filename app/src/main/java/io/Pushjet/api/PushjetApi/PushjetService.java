@@ -13,6 +13,7 @@ import io.Pushjet.api.R;
 
 import java.util.Date;
 
+@SuppressWarnings("WeakerAccess")
 public class PushjetService {
     private String name;
     private String token;

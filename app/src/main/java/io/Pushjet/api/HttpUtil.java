@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
+@SuppressWarnings("WeakerAccess")
 public class HttpUtil {
     public static String Post(String endpoint, Map<String, String> params) throws IOException {
 
@@ -65,10 +66,10 @@ public class HttpUtil {
             }
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String buf;
-            String resp = "";
+            StringBuilder resp = new StringBuilder();
             while ((buf = in.readLine()) != null)
-                resp += buf;
-            return resp;
+                resp.append(buf);
+            return resp.toString();
         } finally {
             if (conn != null)
                 conn.disconnect();
@@ -79,6 +80,7 @@ public class HttpUtil {
 
     public static String Get(String endpoint, Map<String, String> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             HttpGet httpget = new HttpGet(endpoint + "?" + urlencode(data));
             httpget.setHeader("user-agent", "Pushjet-android");
@@ -96,6 +98,7 @@ public class HttpUtil {
 
     public static String Delete(String endpoint, Map<String, String> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             HttpDelete httpDelete = new HttpDelete(endpoint + "?" + urlencode(data));
             httpDelete.setHeader("user-agent", "Pushjet-android");
@@ -112,19 +115,19 @@ public class HttpUtil {
     }
 
     public static String urlencode(Map<String, String> data) {
-        ArrayList<String> encoded = new ArrayList<String>();
+        ArrayList<String> encoded = new ArrayList<>();
         for (String key : data.keySet()) {
             try {
                 encoded.add(URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(data.get(key)));
             } catch (UnsupportedEncodingException ignored) {
             }
         }
-        String retval = "";
+        StringBuilder retval = new StringBuilder();
         for (int i = 0; i < encoded.size(); i++) {
-            retval += encoded.get(i);
+            retval.append(encoded.get(i));
             if (i != encoded.size() - 1)
-                retval += "&";
+                retval.append("&");
         }
-        return retval;
+        return retval.toString();
     }
 }

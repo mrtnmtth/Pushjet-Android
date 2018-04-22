@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
+@SuppressWarnings("FieldCanBeLocal")
 public class ReceivePushAsync extends AsyncTask<Void, Void, ArrayList<PushjetMessage>> {
     private PushjetApi api;
     private PushListAdapter adapter;
@@ -31,10 +32,10 @@ public class ReceivePushAsync extends AsyncTask<Void, Void, ArrayList<PushjetMes
     @Override
     protected ArrayList<PushjetMessage> doInBackground(Void... voids) {
         try {
-            return new ArrayList<PushjetMessage>(Arrays.asList(this.api.getNewMessage()));
+            return new ArrayList<>(Arrays.asList(this.api.getNewMessage()));
         } catch (PushjetException e) {
             this.error = e;
-            return new ArrayList<PushjetMessage>();
+            return new ArrayList<>();
         }
     }
 

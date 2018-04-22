@@ -41,8 +41,6 @@ public class PushListActivity extends AppCompatActivity {
     private PushListAdapter adapter;
     private BroadcastReceiver receiver;
     private SwipeRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private Hashtable<Integer, String> viewSections;
 
     private SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -70,10 +68,11 @@ public class PushListActivity extends AppCompatActivity {
         this.refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         this.refreshLayout.setEnabled(true);
         this.refreshLayout.setOnRefreshListener(refreshListener);
-        this.recyclerView = (RecyclerView) findViewById(R.id.push_list);
-        this.recyclerView.setHasFixedSize(true);
-        this.layoutManager = new LinearLayoutManager(this);
-        this.recyclerView.setLayoutManager(this.layoutManager);
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.push_list);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean firstLaunch = preferences.getBoolean("first_launch", true);

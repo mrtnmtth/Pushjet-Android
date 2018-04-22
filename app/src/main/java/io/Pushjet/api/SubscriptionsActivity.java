@@ -51,6 +51,7 @@ import io.Pushjet.api.PushjetApi.PushjetUri;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class SubscriptionsActivity extends AppCompatActivity {
     private PushjetApi api;
     private DatabaseHandler db;
@@ -88,7 +89,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         adapter = new SubscriptionsAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(db.getAllServices())));
+        adapter.upDateEntries(new ArrayList<>(Arrays.asList(db.getAllServices())));
         registerForContextMenu(findViewById(R.id.subscriptions));
 
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
@@ -114,7 +115,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(db.getAllServices())));
+                adapter.upDateEntries(new ArrayList<>(Arrays.asList(db.getAllServices())));
             }
         };
 
@@ -207,7 +208,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
                 deleteServiceAsync.setCallback(new GenericAsyncCallback() {
                     @Override
                     public void onComplete(Object... objects) {
-                        adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(db.getAllServices())));
+                        adapter.upDateEntries(new ArrayList<>(Arrays.asList(db.getAllServices())));
                     }
                 });
                 deleteServiceAsync.execute(service);
@@ -275,7 +276,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         RefreshServiceCallback callback = new RefreshServiceCallback() {
             @Override
             public void onComplete(PushjetService[] services) {
-                adapter.upDateEntries(new ArrayList<PushjetService>(Arrays.asList(services)));
+                adapter.upDateEntries(new ArrayList<>(Arrays.asList(services)));
                 refreshLayout.setRefreshing(false);
             }
         };

@@ -21,7 +21,7 @@ import java.util.Collections;
 
 public class SubscriptionsAdapter extends RecyclerView.Adapter<SubscriptionsAdapter.ViewHolder> {
     private Context context;
-    private ArrayList<PushjetService> entries = new ArrayList<PushjetService>();
+    private ArrayList<PushjetService> entries = new ArrayList<>();
     private int selected = -1;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -30,7 +30,7 @@ public class SubscriptionsAdapter extends RecyclerView.Adapter<SubscriptionsAdap
         }
     }
 
-    public SubscriptionsAdapter(Context context) {
+    SubscriptionsAdapter(Context context) {
         this.context = context;
     }
 
