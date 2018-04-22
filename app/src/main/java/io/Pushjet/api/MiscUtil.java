@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -37,18 +38,6 @@ public class MiscUtil {
 
     public static String iconFilename(String url) {
         return String.format("icon_%s", hash(url));
-    }
-
-    public static Bitmap matrixToBitmap(BitMatrix matrix) {
-        int height = matrix.getHeight();
-        int width = matrix.getWidth();
-        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                bmp.setPixel(x, y, matrix.get(x, y) ? Color.BLACK : Color.WHITE);
-            }
-        }
-        return bmp;
     }
 
     // Stolen from org.thoughtcrime.securesms.util.BitmapUtil

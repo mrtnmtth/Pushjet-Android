@@ -37,6 +37,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import io.Pushjet.api.Async.AddServiceAsync;
 import io.Pushjet.api.Async.DeleteServiceAsync;
@@ -225,13 +226,13 @@ public class SubscriptionsActivity extends AppCompatActivity {
                 return true;
             case R.id.action_show_qr:
                 try {
-                    BitMatrix matrix = new QRCodeWriter().encode(service.getToken(), BarcodeFormat.QR_CODE, 1000, 1000);
+                    BitMatrix matrix = new QRCodeWriter().encode(service.getToken(), BarcodeFormat.QR_CODE, 512, 512);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     View view = getLayoutInflater().inflate(R.layout.dialog_display_qr, null);
 
                     ImageView image = (ImageView) view.findViewById(R.id.image_qr);
-                    image.setImageBitmap(MiscUtil.matrixToBitmap(matrix));
+                    image.setImageBitmap(new BarcodeEncoder().createBitmap(matrix));
 
                     builder.setView(view).show();
                 } catch (WriterException e) {
