@@ -76,7 +76,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //noinspection TryFinallyCanBeTryWithResources
         try {
             List<PushjetMessage> result = new ArrayList<>();
-            Cursor cMsg = db.query(TABLE_MESSAGE, TABLE_MESSAGE_KEYS, null, null, null, null, null);
+            Cursor cMsg = db.query(TABLE_MESSAGE, TABLE_MESSAGE_KEYS, null, null, null, null, KEY_MESSAGE_TIMESTAMP);
             if (cMsg.getCount() > 0 && cMsg.moveToFirst()) {
                 do {
                     result.add(getMessageFromRow(cMsg, services));

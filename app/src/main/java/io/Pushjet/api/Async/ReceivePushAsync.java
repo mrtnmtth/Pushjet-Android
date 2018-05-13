@@ -41,10 +41,10 @@ public class ReceivePushAsync extends AsyncTask<Void, Void, ArrayList<PushjetMes
 
     @Override
     protected void onPostExecute(ArrayList<PushjetMessage> result) {
+        Collections.reverse(result);
         DatabaseHandler dbh = new DatabaseHandler(this.api.getContext());
         for (PushjetMessage msg : result)
             dbh.addMessage(msg);
-        Collections.reverse(result);
         adapter.addEntries(result);
         if (this.callback != null) {
             this.callback.receivePush(result);

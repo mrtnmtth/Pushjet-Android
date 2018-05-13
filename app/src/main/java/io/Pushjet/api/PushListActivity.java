@@ -126,6 +126,12 @@ public class PushListActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updatePushList();
+    }
+
     private void updatePushList() {
         ArrayList<PushjetMessage> allMessages = new ArrayList<>(Arrays.asList(db.getAllMessages()));
         Collections.reverse(allMessages);
