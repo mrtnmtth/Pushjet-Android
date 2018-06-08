@@ -6,6 +6,6 @@
     </style>
 
     <style name="SettingsTheme" parent="AppTheme">
-        <!-- The settings theme for < v21 should be fine -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 </resources>

@@ -84,7 +84,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         this.layoutManager = new LinearLayoutManager(this);
         this.recyclerView.setLayoutManager(this.layoutManager);
 
-        this.api = new PushjetApi(getApplicationContext(), SettingsActivity.getRegisterUrl(this));
+        this.api = new PushjetApi(getApplicationContext(), SettingsFragment.getRegisterUrl(this));
         this.db = new DatabaseHandler(getApplicationContext());
 
         adapter = new SubscriptionsAdapter(this);

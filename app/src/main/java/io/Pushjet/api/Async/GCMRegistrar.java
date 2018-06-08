@@ -16,7 +16,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import io.Pushjet.api.HttpUtil;
 import io.Pushjet.api.PushjetApi.DeviceUuidFactory;
-import io.Pushjet.api.SettingsActivity;
+import io.Pushjet.api.SettingsFragment;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -127,8 +127,8 @@ public class GCMRegistrar {
                 return null; // No need to re-register
             }
 
-            String url = SettingsActivity.getRegisterUrl(mContext) + "/gcm";
-            String senderId = SettingsActivity.getSenderId(mContext);
+            String url = SettingsFragment.getRegisterUrl(mContext) + "/gcm";
+            String senderId = SettingsFragment.getSenderId(mContext);
             Looper.prepare();
 
             try {

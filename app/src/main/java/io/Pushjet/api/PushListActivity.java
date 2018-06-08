@@ -63,7 +63,7 @@ public class PushListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_push_list);
 
-        this.api = new PushjetApi(getApplicationContext(), SettingsActivity.getRegisterUrl(this));
+        this.api = new PushjetApi(getApplicationContext(), SettingsFragment.getRegisterUrl(this));
         this.db = new DatabaseHandler(getApplicationContext());
         this.refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         this.refreshLayout.setEnabled(true);

@@ -12,7 +12,7 @@ import io.Pushjet.api.PushjetApi.PushjetException;
 import io.Pushjet.api.PushjetApi.PushjetMessage;
 import io.Pushjet.api.PushjetApi.PushjetService;
 import io.Pushjet.api.R;
-import io.Pushjet.api.SettingsActivity;
+import io.Pushjet.api.SettingsFragment;
 
 import java.util.Date;
 
@@ -25,7 +25,7 @@ public class FirstLaunchAsync extends AsyncTask<Context, Void, Void> {
         try {
             Resources resources = context.getResources();
 
-            PushjetApi api = new PushjetApi(context, SettingsActivity.getRegisterUrl(context));
+            PushjetApi api = new PushjetApi(context, SettingsFragment.getRegisterUrl(context));
             DatabaseHandler db = new DatabaseHandler(context);
 
             PushjetService service;
