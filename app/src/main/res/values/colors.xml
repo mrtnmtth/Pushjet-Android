@@ -5,6 +5,8 @@
     <color name="color_accent">@color/color_primary</color>
     <color name="color_white">#ffffff</color>
 
+    <color name="color_icon_bg">#3c5492</color>
+
     <!-- letter tile colors from AOSP UnifiedEmail app -->
     <color name="color_0">#90a4ae</color>
     <color name="color_1">#7baaf7</color>

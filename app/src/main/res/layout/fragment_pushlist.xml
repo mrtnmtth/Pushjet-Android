@@ -24,7 +24,7 @@
         android:layout_marginRight="@dimen/icon_margin"
         android:padding="@dimen/icon_padding"
         android:contentDescription="@string/service_icon"
-        tools:src="@drawable/ic_launcher"
+        tools:src="@mipmap/ic_launcher"
         tools:tint="@sample/services.json/services/color" />
 
     <TextView
