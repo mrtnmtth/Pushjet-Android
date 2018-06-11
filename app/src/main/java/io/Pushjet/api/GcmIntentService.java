@@ -89,9 +89,8 @@ public class GcmIntentService extends IntentService {
                     String contentType = conn.getHeaderField("Content-Type");
 
                     if (contentType.startsWith("image/")) {
-                        Picasso p = Picasso.with(getApplicationContext());
-                        p.setIndicatorsEnabled(true);
-                        Bitmap image = p.load(link)
+                        Bitmap image = Picasso.with(getApplicationContext())
+                                .load(link)
                                 .resize(width, height)
                                 .centerCrop()
                                 .onlyScaleDown()
@@ -174,9 +173,6 @@ public class GcmIntentService extends IntentService {
                 PendingIntent piOpenLink = PendingIntent.getActivity(this, 0, openLinkIntent, 0);
                 mBuilder.addAction(R.drawable.ic_action_open_link,
                         getString(R.string.notification_open_link), piOpenLink);
-                mBuilder.addAction(R.drawable.ic_stat_notif,
-                        getString(R.string.notification_open_pushjet), piOpenApp);
-                mBuilder.setContentIntent(piOpenLink);
             } catch (Exception ignore) {
             }
         }
@@ -187,12 +183,11 @@ public class GcmIntentService extends IntentService {
             PendingIntent piMap = PendingIntent.getActivity(this, 0, mapIntent, 0);
             mBuilder.addAction(R.drawable.ic_action_map,
                     getString(R.string.notification_open_map), piMap);
-            mBuilder.addAction(R.drawable.ic_stat_notif,
-                    getString(R.string.notification_open_pushjet), piOpenApp);
-            mBuilder.setContentIntent(piMap);
         }
 
-        mNotificationManager.notify(notifyID, mBuilder.build());
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(notifyID, mBuilder.build());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
