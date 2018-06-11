@@ -24,7 +24,8 @@
         android:layout_marginRight="@dimen/icon_margin"
         android:padding="@dimen/icon_padding"
         android:contentDescription="@string/service_icon"
-        tools:src="@drawable/ic_launcher" />
+        tools:src="@drawable/ic_launcher"
+        tools:tint="@sample/services.json/services/color" />
 
     <TextView
         android:id="@+id/service_token"
@@ -39,7 +40,7 @@
         android:layout_below="@+id/service_name"
         android:singleLine="true"
         android:ellipsize="end"
-        tools:text="@string/generic_placeholder" />
+        tools:text="@sample/services.json/services/uuid" />
 
     <TextView
         android:id="@+id/service_name"
@@ -56,6 +57,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:singleLine="true"
         android:ellipsize="end"
-        tools:text="@string/generic_placeholder" />
+        tools:text="@sample/services.json/services/name" />
 
 </RelativeLayout>

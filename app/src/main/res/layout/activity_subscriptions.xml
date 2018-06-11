@@ -15,7 +15,9 @@
             android:id="@+id/subscriptions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            tools:itemCount="5"
+            tools:listitem="@layout/fragment_servicelist" />
 
         <LinearLayout
             android:id="@+id/fab_qr_container"

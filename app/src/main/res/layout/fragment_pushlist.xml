@@ -24,7 +24,8 @@
         android:layout_marginRight="@dimen/icon_margin"
         android:padding="@dimen/icon_padding"
         android:contentDescription="@string/service_icon"
-        tools:src="@drawable/ic_launcher" />
+        tools:src="@drawable/ic_launcher"
+        tools:tint="@sample/services.json/services/color" />
 
     <TextView
         android:id="@+id/push_description"
@@ -38,7 +39,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:singleLine="true"
         android:ellipsize="end"
-        tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" />
+        tools:text="@tools:sample/lorem/random" />
 
     <TextView
         android:id="@+id/push_title"
@@ -55,7 +56,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:singleLine="true"
         android:ellipsize="end"
-        tools:text="@string/generic_placeholder" />
+        tools:text="@sample/services.json/services/name" />
 
     <TextView
         android:id="@+id/push_date"
@@ -66,7 +67,7 @@
         android:layout_alignParentRight="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="?android:attr/textColorHint"
-        tools:text="@string/generic_placeholder" />
+        tools:text="@tools:sample/date/hhmm" />
 
     <ImageButton
         android:id="@+id/push_link_button"

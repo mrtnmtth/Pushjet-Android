@@ -1,0 +1,9 @@
+{
+    "services":[
+        {"name": "Jenkins", "uuid": "6dc240ba-2896-48cf-8bce-45c7ab2d52b6", "color": "#ff8a65"},
+        {"name": "Pushjet Announcements", "uuid": "d50a7117-bea1-4f90-999c-2ff17bc54e7d", "color": "#7baaf7"},
+        {"name": "Transmission", "uuid": "ecdbe7de-a10a-4104-935e-23bab6c97fca", "color": "#aed581"},
+        {"name": "ZNC", "uuid": "b4713392-c265-405a-be91-270719dbfdec", "color": "#fdd835"},
+        {"name": "SSH auth", "uuid": "51578522-0227-41ac-8067-affa1b844413", "color": "#90a4ae"}
+    ]
+}
