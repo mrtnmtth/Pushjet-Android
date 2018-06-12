@@ -4,6 +4,10 @@
         android:title="@string/pref_header_general">
 
         <Preference
+            android:key="notify_channels_settings"
+            android:title="@string/pref_channels_manage" />
+
+        <Preference
             android:key="general_reset"
             android:title="@string/pref_general_reset" />
 

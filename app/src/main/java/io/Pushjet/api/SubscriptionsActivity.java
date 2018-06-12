@@ -213,6 +213,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
                     }
                 });
                 deleteServiceAsync.execute(service);
+                NotificationUtil.deleteServiceChannels(service, this);
                 return true;
             case R.id.action_clear_notifications:
                 db.cleanService(service);

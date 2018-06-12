@@ -29,11 +29,13 @@ import io.Pushjet.api.Async.ReceivePushAsync;
 import io.Pushjet.api.Async.ReceivePushCallback;
 import io.Pushjet.api.PushjetApi.PushjetApi;
 import io.Pushjet.api.PushjetApi.PushjetMessage;
+import io.Pushjet.api.PushjetApi.PushjetService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 
 public class PushListActivity extends AppCompatActivity {
     private PushjetApi api;
@@ -93,6 +95,12 @@ public class PushListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(sectionDivider);
 
         updatePushList();
+
+        // create notification channels for each subscribed service
+        List<PushjetService> services = new ArrayList<>(Arrays.asList(db.getAllServices()));
+        for (PushjetService service: services) {
+            NotificationUtil.createServiceChannels(service, this);
+        }
 
         GCMRegistrar mGCMRegistrar = new GCMRegistrar(getApplicationContext());
         if (firstLaunch || mGCMRegistrar.shouldRegister()) {

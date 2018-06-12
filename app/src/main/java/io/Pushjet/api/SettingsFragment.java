@@ -3,8 +3,10 @@ package io.Pushjet.api;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -30,8 +32,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         bindPreferenceSummaryToValue(findPreference("server_custom_url"));
         bindPreferenceSummaryToValue(findPreference("server_custom_sender_id"));
 
+        findPreference("notify_channels_settings").setOnPreferenceClickListener(sBindOnPreferenceClickListener);
         findPreference("general_reset").setOnPreferenceClickListener(sBindOnPreferenceClickListener);
         findPreference("server_register").setOnPreferenceClickListener(sBindOnPreferenceClickListener);
+
+        // hide notification channel preferences on Android version < Oreo
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            findPreference("notify_channels_settings").setVisible(false);
+        }
     }
 
     private static Preference.OnPreferenceClickListener sBindOnPreferenceClickListener = new Preference.OnPreferenceClickListener() {
@@ -95,6 +103,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 });
 
                 builder.create().show();
+            } else if (key.equalsIgnoreCase("notify_channels_settings") &&
+                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+                context.startActivity(intent);
+
+                return true;
             }
 
             return false;
