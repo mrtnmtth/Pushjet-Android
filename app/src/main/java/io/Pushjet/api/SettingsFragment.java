@@ -19,7 +19,6 @@ import io.Pushjet.api.PushjetApi.PushjetApi;
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private static final String DEFAULT_PUSHJET_SERVER_URL = "https://api.pushjet.io";
-    private static final String DEFAULT_SENDER_ID = "509878466986";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -30,7 +29,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
         bindPreferenceSummaryToValue(findPreference("server_custom_url"));
-        bindPreferenceSummaryToValue(findPreference("server_custom_sender_id"));
 
         findPreference("notify_channels_settings").setOnPreferenceClickListener(sBindOnPreferenceClickListener);
         findPreference("general_reset").setOnPreferenceClickListener(sBindOnPreferenceClickListener);
@@ -166,17 +164,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return url.replaceAll("/+$", "");
         } else {
             return DEFAULT_PUSHJET_SERVER_URL;
-        }
-    }
-
-    public static String getSenderId(Context context) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useCustom = preferences.getBoolean("server_use_custom", false);
-
-        if (useCustom) {
-            return preferences.getString("server_custom_sender_id", DEFAULT_SENDER_ID);
-        } else {
-            return DEFAULT_SENDER_ID;
         }
     }
 }

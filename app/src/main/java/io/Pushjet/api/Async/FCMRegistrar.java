@@ -126,7 +126,6 @@ public class FCMRegistrar {
             }
 
             String url = SettingsFragment.getRegisterUrl(mContext) + "/gcm";
-            String senderId = SettingsFragment.getSenderId(mContext);
             Looper.prepare();
 
             try {
