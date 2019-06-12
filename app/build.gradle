@@ -30,7 +30,7 @@ dependencies {
     implementation 'com.android.support:preference-v7:27.1.1'
     implementation 'com.android.support:preference-v14:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.6.0'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -43,3 +43,5 @@ allprojects {
         }
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -11,37 +11,35 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import io.Pushjet.api.HttpUtil;
-import io.Pushjet.api.PushjetApi.DeviceUuidFactory;
-import io.Pushjet.api.SettingsFragment;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
+import io.Pushjet.api.HttpUtil;
+import io.Pushjet.api.PushjetApi.DeviceUuidFactory;
+import io.Pushjet.api.PushjetFcmService;
+import io.Pushjet.api.SettingsFragment;
+
 public class GCMRegistrar {
     private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "app_version";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private String TAG = "GCM";
-    private GoogleCloudMessaging gcm;
+    private String TAG = "PushjetFCM";
     private Context mContext;
 
     public GCMRegistrar(Context context) {
         this.mContext = context;
-        gcm = GoogleCloudMessaging.getInstance(context);
     }
 
     public boolean checkPlayServices(android.app.Activity self) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(mContext);
         if (resultCode != ConnectionResult.SUCCESS) {
-            Log.e(TAG, "This device does not support GCM");
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode) && self != null) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, self, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            Log.e(TAG, "This device does not support FCM");
+            if (googleApiAvailability.isUserResolvableError(resultCode) && self != null) {
+                googleApiAvailability.getErrorDialog(self, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Toast.makeText(mContext, "Sorry, you need to have the Google Play services installed :<", Toast.LENGTH_SHORT).show();
             }
@@ -83,7 +81,7 @@ public class GCMRegistrar {
         }
     }
 
-    private SharedPreferences getGcmPreferences(Context context) {
+    private static SharedPreferences getGcmPreferences(Context context) {
         return context.getSharedPreferences(GCMRegistrar.class.getSimpleName(), Context.MODE_PRIVATE);
     }
 
@@ -132,10 +130,7 @@ public class GCMRegistrar {
             Looper.prepare();
 
             try {
-                if (gcm == null) {
-                    gcm = GoogleCloudMessaging.getInstance(mContext);
-                }
-                String regid = gcm.register(senderId);
+                String regid = PushjetFcmService.getToken(mContext);
 
                 Map<String, String> data = new HashMap<>();
                 data.put("regId", regid);
