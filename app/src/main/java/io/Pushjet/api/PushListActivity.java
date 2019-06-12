@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import io.Pushjet.api.Async.FirstLaunchAsync;
-import io.Pushjet.api.Async.GCMRegistrar;
+import io.Pushjet.api.Async.FCMRegistrar;
 import io.Pushjet.api.Async.ReceivePushAsync;
 import io.Pushjet.api.Async.ReceivePushCallback;
 import io.Pushjet.api.PushjetApi.PushjetApi;
@@ -102,10 +102,10 @@ public class PushListActivity extends AppCompatActivity {
             NotificationUtil.createServiceChannels(service, this);
         }
 
-        GCMRegistrar mGCMRegistrar = new GCMRegistrar(getApplicationContext());
-        if (firstLaunch || mGCMRegistrar.shouldRegister()) {
-            if (mGCMRegistrar.checkPlayServices(this)) {
-                mGCMRegistrar.registerInBackground(firstLaunch);
+        FCMRegistrar mFCMRegistrar = new FCMRegistrar(getApplicationContext());
+        if (firstLaunch || mFCMRegistrar.shouldRegister()) {
+            if (mFCMRegistrar.checkPlayServices(this)) {
+                mFCMRegistrar.registerInBackground(firstLaunch);
             } else {
                 finish();
             }

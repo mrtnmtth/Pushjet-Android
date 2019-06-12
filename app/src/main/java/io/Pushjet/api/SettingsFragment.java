@@ -12,13 +12,13 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 
-import io.Pushjet.api.Async.GCMRegistrar;
+import io.Pushjet.api.Async.FCMRegistrar;
 import io.Pushjet.api.Async.RefreshServiceAsync;
 import io.Pushjet.api.PushjetApi.PushjetApi;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private static final String DEFAULT_PUSHJET_GCM_REGISTER_URL = "https://api.pushjet.io";
+    private static final String DEFAULT_PUSHJET_SERVER_URL = "https://api.pushjet.io";
     private static final String DEFAULT_SENDER_ID = "509878466986";
 
     @Override
@@ -81,12 +81,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        GCMRegistrar gcm = new GCMRegistrar(context);
+                        FCMRegistrar fcm = new FCMRegistrar(context);
 
-                        gcm.forgetRegistration();
+                        fcm.forgetRegistration();
                         db.truncateMessages();
                         db.truncateServices();
-                        gcm.registerInBackground(true);
+                        fcm.registerInBackground(true);
 
                         PushjetApi api = new PushjetApi(context, getRegisterUrl(context));
                         new RefreshServiceAsync(api, db).execute();
@@ -162,10 +162,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         boolean useCustom = preferences.getBoolean("server_use_custom", false);
 
         if (useCustom) {
-            String url = preferences.getString("server_custom_url", DEFAULT_PUSHJET_GCM_REGISTER_URL);
+            String url = preferences.getString("server_custom_url", DEFAULT_PUSHJET_SERVER_URL);
             return url.replaceAll("/+$", "");
         } else {
-            return DEFAULT_PUSHJET_GCM_REGISTER_URL;
+            return DEFAULT_PUSHJET_SERVER_URL;
         }
     }
 

@@ -22,14 +22,14 @@ import io.Pushjet.api.PushjetApi.DeviceUuidFactory;
 import io.Pushjet.api.PushjetFcmService;
 import io.Pushjet.api.SettingsFragment;
 
-public class GCMRegistrar {
+public class FCMRegistrar {
     private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "app_version";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private String TAG = "PushjetFCM";
     private Context mContext;
 
-    public GCMRegistrar(Context context) {
+    public FCMRegistrar(Context context) {
         this.mContext = context;
     }
 
@@ -51,7 +51,7 @@ public class GCMRegistrar {
     }
 
     private void storeRegistrationId(String regId) {
-        final SharedPreferences prefs = getGcmPreferences(mContext);
+        final SharedPreferences prefs = getFcmPreferences(mContext);
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putString(PROPERTY_REG_ID, regId);
@@ -60,7 +60,7 @@ public class GCMRegistrar {
     }
 
     public String getRegistrationId() {
-        final SharedPreferences prefs = getGcmPreferences(mContext);
+        final SharedPreferences prefs = getFcmPreferences(mContext);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty() || registrationId.equals(""))
             return "";
@@ -81,8 +81,8 @@ public class GCMRegistrar {
         }
     }
 
-    private static SharedPreferences getGcmPreferences(Context context) {
-        return context.getSharedPreferences(GCMRegistrar.class.getSimpleName(), Context.MODE_PRIVATE);
+    private static SharedPreferences getFcmPreferences(Context context) {
+        return context.getSharedPreferences(FCMRegistrar.class.getSimpleName(), Context.MODE_PRIVATE);
     }
 
     public AsyncRegistrar registerInBackground() {
@@ -100,7 +100,7 @@ public class GCMRegistrar {
     }
 
     public void forgetRegistration() {
-        final SharedPreferences prefs = getGcmPreferences(mContext);
+        final SharedPreferences prefs = getFcmPreferences(mContext);
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putString(PROPERTY_REG_ID, "");
@@ -154,7 +154,7 @@ public class GCMRegistrar {
                 }
                 storeRegistrationId(regid);
             } catch (IOException ignore) {
-                Toast.makeText(mContext, "Could not register with GCM server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Could not register with FCM server", Toast.LENGTH_SHORT).show();
             }
 
             Log.i(TAG, "Registered!");
