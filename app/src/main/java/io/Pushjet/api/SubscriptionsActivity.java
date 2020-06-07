@@ -13,14 +13,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -31,6 +23,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -38,6 +39,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.Pushjet.api.Async.AddServiceAsync;
 import io.Pushjet.api.Async.DeleteServiceAsync;
@@ -48,9 +52,6 @@ import io.Pushjet.api.PushjetApi.PushjetApi;
 import io.Pushjet.api.PushjetApi.PushjetException;
 import io.Pushjet.api.PushjetApi.PushjetService;
 import io.Pushjet.api.PushjetApi.PushjetUri;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class SubscriptionsActivity extends AppCompatActivity {

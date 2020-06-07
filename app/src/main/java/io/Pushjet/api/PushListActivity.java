@@ -12,10 +12,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,19 +19,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.Pushjet.api.Async.FirstLaunchAsync;
-import io.Pushjet.api.Async.FCMRegistrar;
-import io.Pushjet.api.Async.ReceivePushAsync;
-import io.Pushjet.api.Async.ReceivePushCallback;
-import io.Pushjet.api.PushjetApi.PushjetApi;
-import io.Pushjet.api.PushjetApi.PushjetMessage;
-import io.Pushjet.api.PushjetApi.PushjetService;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+
+import io.Pushjet.api.Async.FCMRegistrar;
+import io.Pushjet.api.Async.FirstLaunchAsync;
+import io.Pushjet.api.Async.ReceivePushAsync;
+import io.Pushjet.api.Async.ReceivePushCallback;
+import io.Pushjet.api.PushjetApi.PushjetApi;
+import io.Pushjet.api.PushjetApi.PushjetMessage;
+import io.Pushjet.api.PushjetApi.PushjetService;
 
 public class PushListActivity extends AppCompatActivity {
     private PushjetApi api;
